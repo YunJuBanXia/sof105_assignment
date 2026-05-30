@@ -8,7 +8,6 @@ typedef enum {
 
     ERROR_INVALID_INPUT,
     ERROR_QUEUE_EMPTY,
-    ERROR_QUEUE_FULL,
     ERROR_STACK_EMPTY,
     ERROR_STACK_FULL,
     ERROR_NOT_FOUND,
@@ -21,12 +20,12 @@ typedef enum {
 typedef struct {
     const StatusCode code;
     const char* message;
-} ErrorResponse;
+} Response;
 
 
-ErrorResponse resolveError(const StatusCode code, const char* message);
+Response makeResponse(const StatusCode code, const char* message);
 
-void printError(ErrorResponse error, const char* context);
+void printError(Response error, const char* context);
 
 
 #endif // ERRORS_H

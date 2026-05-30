@@ -4,19 +4,19 @@
 #include <stdio.h>
 
 
-ErrorResponse resolveError(const StatusCode code, const char* message) {
+Response makeResponse(const StatusCode code, const char* message) {
     if (message == NULL) {
         message = "No additional information provided.";
     }
 
-    return (ErrorResponse) {
+    return (Response) {
         .code = code,
         .message = message
     };
 }
 
 
-void printError(ErrorResponse error, const char* context) {
+void printError(Response error, const char* context) {
     // Only print if it's an error
     if (error.code == SUCCESS) {
         return;
