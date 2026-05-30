@@ -12,6 +12,10 @@ int isEmpty(const StudentRequestQueue *queue) {
 
 
 Response initQueue(StudentRequestQueue *queue) {
+    if (queue == NULL) {
+        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+    }
+
     queue->front = NULL;
     queue->rear = NULL;
     queue->count = 0;
@@ -48,6 +52,10 @@ Response enqueue(StudentRequestQueue *queue, StudentRequest *request) {
 
 
 Response dequeue(StudentRequestQueue *queue, StudentRequest *request) {  // The request parameter is used to return the removed request
+    if (queue == NULL || request == NULL) {
+        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+    }
+
     if (isEmpty(queue)) {
         return makeResponse(ERROR_QUEUE_EMPTY, "Queue is empty.");
     }
@@ -64,6 +72,10 @@ Response dequeue(StudentRequestQueue *queue, StudentRequest *request) {  // The 
 
 
 Response peek(const StudentRequestQueue *queue, StudentRequest *request) {  // The request parameter is used to return the front request
+    if (queue == NULL || request == NULL) {
+        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+    }
+
     if (isEmpty(queue)) {
         return makeResponse(ERROR_QUEUE_EMPTY, "Queue is empty.");
     }
@@ -75,6 +87,10 @@ Response peek(const StudentRequestQueue *queue, StudentRequest *request) {  // T
 
 
 Response displayQueue(const StudentRequestQueue *queue) {
+    if (queue == NULL) {
+        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+    }
+
     if (isEmpty(queue)) {
         return makeResponse(ERROR_QUEUE_EMPTY, "Queue is empty.");
     }
