@@ -2,6 +2,7 @@
 #include "queue.h"
 
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 
@@ -19,7 +20,7 @@ Response initQueue(StudentRequestQueue *queue) {
 
 
 Response enqueue(StudentRequestQueue *queue, StudentRequest *request) {
-    // Validate if input is valid
+    // Validate input
     if (queue == NULL || request == NULL) {
         return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
     }
@@ -70,4 +71,46 @@ Response peek(const StudentRequestQueue *queue, StudentRequest *request) {  // T
     *request = *(queue->front);  // Copy the request data
 
     return makeResponse(SUCCESS, "Request peeked successfully.");
+}
+
+
+Response displayQueue(const StudentRequestQueue *queue) {
+    if (isEmpty(queue)) {
+        return makeResponse(ERROR_QUEUE_EMPTY, "Queue is empty.");
+    }
+
+    StudentRequest *current = queue->front;
+
+    int max_name_length = 10;  // Minimum width for name column
+    int max_service_length = 12;  // Minimum width for service type column
+    // First pass to determine the maximum width of name and service
+    while (current != NULL) {
+        int name_length = snprintf(NULL, 0, "%s", current->name);
+        int service_length = snprintf(NULL, 0, "%s", current->service_type);
+        if (name_length > max_name_length) {
+            max_name_length = name_length;
+        }
+        if (service_length > max_service_length) {
+            max_service_length = service_length;
+        }
+        current = current->next;
+    }
+
+    // Second pass to print the queue
+    printf("\nWaiting Queue:\n");
+    current = queue->front;
+    int count = 1;
+    while (current != NULL) {
+        printf("\t%d. %d  %-*s  %-*s  %-10s\n",
+            count,
+            current->student_id,
+            max_name_length, current->name,
+            max_service_length, current->service_type,
+            current->priority == NORMAL ? "Normal" : "Urgent"
+        );
+        count++;
+        current = current->next;
+    }
+
+    return makeResponse(SUCCESS, "Queue displayed successfully.");
 }

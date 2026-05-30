@@ -32,6 +32,7 @@ Response initQueue(StudentRequestQueue *queue);
 Response enqueue(StudentRequestQueue *queue, StudentRequest *request);
 Response dequeue(StudentRequestQueue *queue, StudentRequest *request);
 Response peek(const StudentRequestQueue *queue, StudentRequest *request);
+Response displayQueue(const StudentRequestQueue *queue);
 
 
 #endif // QUEUE_H
