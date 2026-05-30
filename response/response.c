@@ -1,5 +1,5 @@
 // errors.c
-#include "errors.h"
+#include "response.h"
 
 #include <stdio.h>
 
