@@ -25,7 +25,7 @@ typedef struct {
 
 Response makeResponse(const StatusCode code, const char* message);
 
-void printError(Response error, const char* context);
+void printError(Response error);
 
 
 #endif // RESPONSE_H

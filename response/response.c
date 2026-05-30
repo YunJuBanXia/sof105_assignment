@@ -16,7 +16,7 @@ Response makeResponse(const StatusCode code, const char* message) {
 }
 
 
-void printError(Response error, const char* context) {
+void printError(Response error) {
     // Only print if it's an error
     if (error.code == SUCCESS) {
         return;
@@ -26,8 +26,5 @@ void printError(Response error, const char* context) {
     printf("\n\n==================================\n\n");
     printf("Error Occurred!\n");
     printf("Message: %s\n", error.message);
-    if (context != NULL) {
-        printf("Context: %s\n", context);
-    }
     printf("\n\n==================================\n\n");
 }
