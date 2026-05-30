@@ -23,8 +23,8 @@ int isEmpty(const StudentRequestQueue *queue);
 
 Response initQueue(StudentRequestQueue *queue);
 Response enqueue(StudentRequestQueue *queue, StudentRequest *request);
-Response dequeue(StudentRequestQueue *queue, StudentRequest *request);
-Response peek(const StudentRequestQueue *queue, StudentRequest *request);
+Response dequeue(StudentRequestQueue *queue, StudentRequest *request);  // request parameter is used to return the removed request
+Response peek(const StudentRequestQueue *queue, StudentRequest *request);  // request parameter is used to return the front request without removing it
 Response displayQueue(const StudentRequestQueue *queue);
 
 
