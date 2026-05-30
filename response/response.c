@@ -1,4 +1,4 @@
-// errors.c
+// response.c
 #include "response.h"
 
 #include <stdio.h>

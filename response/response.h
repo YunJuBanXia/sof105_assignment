@@ -1,6 +1,6 @@
-// errors.h
-#ifndef ERRORS_H
-#define ERRORS_H
+// response.h
+#ifndef RESPONSE_H
+#define RESPONSE_H
 
 
 typedef enum {
@@ -28,4 +28,4 @@ Response makeResponse(const StatusCode code, const char* message);
 void printError(Response error, const char* context);
 
 
-#endif // ERRORS_H
+#endif // RESPONSE_H
