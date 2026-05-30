@@ -25,12 +25,12 @@ Response enqueue(StudentRequestQueue *queue, StudentRequest *request) {
         return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
     }
 
-    StudentRequest* new_node = (StudentRequest*)malloc(sizeof(StudentRequest));
+    QueueNode* new_node = (QueueNode*)malloc(sizeof(QueueNode));
 
     if (new_node == NULL) {
         return makeResponse(ERROR_MEMORY_ALLOCATION, "Failed to allocate memory for new request.");
     }
-    *new_node = *request;  // Copy the request data
+    new_node->request = *request;  // Copy the request data
     new_node->next = NULL; // Ensure the next pointer is null
 
     // Add the new node to the queue
@@ -52,8 +52,8 @@ Response dequeue(StudentRequestQueue *queue, StudentRequest *request) {  // The 
         return makeResponse(ERROR_QUEUE_EMPTY, "Queue is empty.");
     }
 
-    StudentRequest* temp = queue->front;
-    *request = *temp;  // Copy the request data
+    QueueNode* temp = queue->front;
+    *request = temp->request;  // Copy the request data
 
     queue->front = queue->front->next;
     free(temp);
@@ -68,7 +68,7 @@ Response peek(const StudentRequestQueue *queue, StudentRequest *request) {  // T
         return makeResponse(ERROR_QUEUE_EMPTY, "Queue is empty.");
     }
 
-    *request = *(queue->front);  // Copy the request data
+    *request = queue->front->request;  // Copy the request data
 
     return makeResponse(SUCCESS, "Request peeked successfully.");
 }
@@ -79,14 +79,14 @@ Response displayQueue(const StudentRequestQueue *queue) {
         return makeResponse(ERROR_QUEUE_EMPTY, "Queue is empty.");
     }
 
-    StudentRequest *current = queue->front;
+    QueueNode *current = queue->front;
 
     int max_name_length = 10;  // Minimum width for name column
     int max_service_length = 12;  // Minimum width for service type column
     // First pass to determine the maximum width of name and service
     while (current != NULL) {
-        int name_length = snprintf(NULL, 0, "%s", current->name);
-        int service_length = snprintf(NULL, 0, "%s", current->service_type);
+        int name_length = snprintf(NULL, 0, "%s", current->request.name);
+        int service_length = snprintf(NULL, 0, "%s", current->request.service_type);
         if (name_length > max_name_length) {
             max_name_length = name_length;
         }
@@ -103,10 +103,10 @@ Response displayQueue(const StudentRequestQueue *queue) {
     while (current != NULL) {
         printf("\t%d. %d  %-*s  %-*s  %-10s\n",
             count,
-            current->student_id,
-            max_name_length, current->name,
-            max_service_length, current->service_type,
-            current->priority == NORMAL ? "Normal" : "Urgent"
+            current->request.student_id,
+            max_name_length, current->request.name,
+            max_service_length, current->request.service_type,
+            current->request.priority == NORMAL ? "Normal" : "Urgent"
         );
         count++;
         current = current->next;

@@ -3,25 +3,18 @@
 #define QUEUE_H
 
 #include "../response/response.h"
-
-typedef enum {
-    NORMAL = 0,
-    URGENT = 1
-} PriorityLevel;
+#include "../student.h"
 
 
-typedef struct StudentRequest {
-    int student_id;
-    char* name;
-    char* service_type;
-    PriorityLevel priority;
-    struct StudentRequest *next;  // Pointer to the next request in the queue
-} StudentRequest;
+typedef struct QueueNode {
+    StudentRequest request;
+    struct QueueNode* next;
+} QueueNode;
 
 
 typedef struct {
-    StudentRequest *front;
-    StudentRequest *rear;
+    QueueNode *front;
+    QueueNode *rear;
     size_t count;
 } StudentRequestQueue;
 
