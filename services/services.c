@@ -274,6 +274,7 @@ Response undoLastCompletedService(StudentRequestStack *stack, StudentRequestQueu
 
 
 Response displaySystemSummary(const StudentRequestQueue *queue, const StudentRequestStack *stack, const CompletedServiceList *list) {
+    // Corresponds to menu option 7: Display system summary
     if (queue == NULL || stack == NULL || list == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
@@ -294,6 +295,7 @@ Response displaySystemSummary(const StudentRequestQueue *queue, const StudentReq
 
 
 Response shutdownSystem(StudentRequestQueue *queue, StudentRequestStack *stack, CompletedServiceList *list) {
+    // Corresponds to menu option 8: Exit
     if (queue == NULL || stack == NULL || list == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
