@@ -19,7 +19,7 @@ typedef enum {
 
 
 typedef struct {
-    const StatusCode code;
+    StatusCode code;
     const char* message;
 } Response;
 
