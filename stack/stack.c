@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 
-Response isEmpty(const StudentRequestStack *stack, int *result) {
+Response isEmptyStack(const StudentRequestStack *stack, int *result) {
     if (stack == NULL || result == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
@@ -47,7 +47,7 @@ Response push(StudentRequestStack *stack, StudentRequest *request) {
 
 
 Response pop(StudentRequestStack *stack, StudentRequest *request) {  // The request parameter is used to return the removed request
-    if (stack == NULL) {
+    if (stack == NULL || request == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
@@ -66,8 +66,8 @@ Response pop(StudentRequestStack *stack, StudentRequest *request) {  // The requ
 }
 
 
-Response peek(const StudentRequestStack *stack, StudentRequest *request) {  // The request parameter is used to return the top request
-    if (stack == NULL) {
+Response peekStack(const StudentRequestStack *stack, StudentRequest *request) {  // The request parameter is used to return the top request
+    if (stack == NULL || request == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
