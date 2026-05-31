@@ -7,7 +7,7 @@
 
 
 Response isEmptyQueue(const StudentRequestQueue *queue, int *result) {
-    if (queue == NULL) {
+    if (queue == NULL || result == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
     *result = queue->count == 0;
@@ -63,7 +63,7 @@ Response enqueue(StudentRequestQueue *queue, StudentRequest *request) {
 
 
 Response dequeue(StudentRequestQueue *queue, StudentRequest *request) {  // The request parameter is used to return the removed request
-    if (queue == NULL) {
+    if (queue == NULL || request == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
@@ -89,7 +89,7 @@ Response dequeue(StudentRequestQueue *queue, StudentRequest *request) {  // The 
 
 
 Response peekQueue(const StudentRequestQueue *queue, StudentRequest *request) {  // The request parameter is used to return the front request
-    if (queue == NULL) {
+    if (queue == NULL || request == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
