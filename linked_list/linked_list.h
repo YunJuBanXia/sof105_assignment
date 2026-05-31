@@ -18,8 +18,7 @@ typedef struct {
 } CompletedServiceList;
 
 
-size_t CountCompletedServices(const CompletedServiceList *list);
-
+Response CountCompletedServices(const CompletedServiceList *list, size_t *count);  // count is used to return the number of completed services
 Response initList(CompletedServiceList *list);
 Response addToList(CompletedServiceList *list, StudentRequest *request);
 Response displayList(const CompletedServiceList *list);

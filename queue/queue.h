@@ -19,8 +19,7 @@ typedef struct {
 } StudentRequestQueue;
 
 
-int isEmpty(const StudentRequestQueue *queue);
-
+Response isEmpty(const StudentRequestQueue *queue, int *result);  // result is used to return whether the queue is empty (1 for empty, 0 for not empty)
 Response initQueue(StudentRequestQueue *queue);
 Response enqueue(StudentRequestQueue *queue, StudentRequest *request);
 Response dequeue(StudentRequestQueue *queue, StudentRequest *request);  // request parameter is used to return the removed request

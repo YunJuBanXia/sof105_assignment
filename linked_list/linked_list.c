@@ -6,14 +6,18 @@
 #include <stdlib.h>
 
 
-size_t CountCompletedServices(const CompletedServiceList *list) {
-    return list->count;
+Response CountCompletedServices(const CompletedServiceList *list, size_t *count) {
+    if (list == NULL) {
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
+    }
+    *count = list->count;
+    return makeResponse(SUCCESS, "Completed services counted successfully.");
 }
 
 
 Response initList(CompletedServiceList *list) {
     if (list == NULL) {
-        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
     list->head = NULL;
@@ -24,7 +28,7 @@ Response initList(CompletedServiceList *list) {
 
 Response addToList(CompletedServiceList *list, StudentRequest *request) {
     if (list == NULL || request == NULL) {
-        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
     ListNode* new_node = (ListNode*)malloc(sizeof(ListNode));
@@ -44,7 +48,7 @@ Response addToList(CompletedServiceList *list, StudentRequest *request) {
 
 Response displayList(const CompletedServiceList *list) {
     if (list == NULL) {
-        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
     if (list->head == NULL) {
@@ -88,8 +92,8 @@ Response displayList(const CompletedServiceList *list) {
 
 
 Response searchByStudentID(const CompletedServiceList *list, int student_id, StudentRequest **result, size_t *count) {
-    if (list == NULL || result == NULL || count == NULL) {
-        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+    if (list == NULL) {
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
     ListNode *current = list->head;

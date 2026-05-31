@@ -6,14 +6,18 @@
 #include <stdlib.h>
 
 
-int isEmpty(const StudentRequestQueue *queue) {
-    return queue->count == 0;
+Response isEmpty(const StudentRequestQueue *queue, int *result) {
+    if (queue == NULL) {
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
+    }
+    *result = queue->count == 0;
+    return makeResponse(SUCCESS, "Queue status checked successfully.");
 }
 
 
 Response initQueue(StudentRequestQueue *queue) {
     if (queue == NULL) {
-        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
     queue->front = NULL;
@@ -26,7 +30,7 @@ Response initQueue(StudentRequestQueue *queue) {
 Response enqueue(StudentRequestQueue *queue, StudentRequest *request) {
     // Validate input
     if (queue == NULL || request == NULL) {
-        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
     QueueNode* new_node = (QueueNode*)malloc(sizeof(QueueNode));
@@ -38,7 +42,14 @@ Response enqueue(StudentRequestQueue *queue, StudentRequest *request) {
     new_node->next = NULL; // Ensure the next pointer is null
 
     // Add the new node to the queue
-    if (isEmpty(queue)) {
+    int is_empty;
+    Response resp = isEmpty(queue, &is_empty);
+    if (resp.code != SUCCESS) {
+        free(new_node);
+        return resp;
+    }
+
+    if (is_empty) {
         queue->front = new_node;
         queue->rear = new_node;
     } else {
@@ -52,11 +63,17 @@ Response enqueue(StudentRequestQueue *queue, StudentRequest *request) {
 
 
 Response dequeue(StudentRequestQueue *queue, StudentRequest *request) {  // The request parameter is used to return the removed request
-    if (queue == NULL || request == NULL) {
-        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+    if (queue == NULL) {
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
-    if (isEmpty(queue)) {
+    int is_empty;
+    Response resp = isEmpty(queue, &is_empty);
+    if (resp.code != SUCCESS) {
+        return resp;
+    }
+
+    if (is_empty) {
         return makeResponse(ERROR_QUEUE_EMPTY, "Queue is empty.");
     }
 
@@ -72,11 +89,17 @@ Response dequeue(StudentRequestQueue *queue, StudentRequest *request) {  // The 
 
 
 Response peek(const StudentRequestQueue *queue, StudentRequest *request) {  // The request parameter is used to return the front request
-    if (queue == NULL || request == NULL) {
-        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+    if (queue == NULL) {
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
-    if (isEmpty(queue)) {
+    int is_empty;
+    Response resp = isEmpty(queue, &is_empty);
+    if (resp.code != SUCCESS) {
+        return resp;
+    }
+
+    if (is_empty) {
         return makeResponse(ERROR_QUEUE_EMPTY, "Queue is empty.");
     }
 
@@ -88,10 +111,16 @@ Response peek(const StudentRequestQueue *queue, StudentRequest *request) {  // T
 
 Response displayQueue(const StudentRequestQueue *queue) {
     if (queue == NULL) {
-        return makeResponse(ERROR_INVALID_INPUT, "Invalid input provided.");
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
-    if (isEmpty(queue)) {
+    int is_empty;
+    Response resp = isEmpty(queue, &is_empty);
+    if (resp.code != SUCCESS) {
+        return resp;
+    }
+
+    if (is_empty) {
         return makeResponse(ERROR_QUEUE_EMPTY, "Queue is empty.");
     }
 

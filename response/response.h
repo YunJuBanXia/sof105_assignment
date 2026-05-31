@@ -13,6 +13,7 @@ typedef enum {
     ERROR_NOT_FOUND,
 
     ERROR_MEMORY_ALLOCATION,
+    ERROR_INVALID_PARAMETER,
     ERROR_INTERNAL,  // Other internal errors
 } StatusCode;
 
