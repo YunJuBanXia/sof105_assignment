@@ -9,7 +9,7 @@
 
 Response getMenuChoice(int *choice);
 Response addNewStudentRequest(StudentRequestQueue *queue, StudentRequest *request);
-Response serveNextStudent(StudentRequestQueue *queue, StudentRequestStack *stack);
+Response serveNextStudent(StudentRequestQueue *queue, StudentRequestStack *stack, CompletedServiceList *list);
 Response displayWaitingQueue(const StudentRequestQueue *queue);
 Response displayCompletedServices(const CompletedServiceList *list);
 Response searchCompletedServiceByStudentID(const CompletedServiceList *list, int student_id, StudentRequest **result, size_t *count);

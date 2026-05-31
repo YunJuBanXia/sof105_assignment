@@ -168,7 +168,7 @@ int main(void) {
             }
 
             case 2: {
-                Response serve_response = serveNextStudent(&queue, &stack);
+                Response serve_response = serveNextStudent(&queue, &stack, &list);
                 if (serve_response.code != SUCCESS) {
                     printError(serve_response);
                     break;

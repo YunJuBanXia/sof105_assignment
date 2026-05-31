@@ -7,6 +7,10 @@
 
 
 static char *duplicateString(const char *source) {
+    // This function is used to create a duplicate of a string, which is necessary when adding requests to the completed service list
+    // There is a same function in linked_list/linked_list.c, but we need it here as well to avoid circular dependency between services and linked_list modules
+    // The static keyword limits the scope of this function to this file
+    // So it won't cause any conflict with the duplicateString function in linked_list/linked_list.c
     if (source == NULL) {
         return NULL;
     }
@@ -22,6 +26,10 @@ static char *duplicateString(const char *source) {
 
 
 static void freeRequestFields(StudentRequest *request) {
+    // This function is used to free the dynamically allocated fields of a StudentRequest
+    // There is a same function in linked_list/linked_list.c, but we need it here as well to avoid circular dependency between services and linked_list modules
+    // The static keyword limits the scope of this function to this file
+    // So it won't cause any conflict with the freeRequestFields function in linked_list/linked_list.c
     if (request == NULL) {
         return;
     }
@@ -34,6 +42,8 @@ static void freeRequestFields(StudentRequest *request) {
 
 
 static void destroyQueue(StudentRequestQueue *queue) {
+    // This function is used to free all the nodes in the queue and reset it to an empty state
+    // It is called during system shutdown to clean up resources
     if (queue == NULL) {
         return;
     }
@@ -53,6 +63,8 @@ static void destroyQueue(StudentRequestQueue *queue) {
 
 
 static void destroyStack(StudentRequestStack *stack) {
+    // This function is used to free all the nodes in the stack and reset it to an empty state
+    // It is called during system shutdown to clean up resources
     if (stack == NULL) {
         return;
     }
@@ -71,6 +83,8 @@ static void destroyStack(StudentRequestStack *stack) {
 
 
 static void destroyList(CompletedServiceList *list) {
+    // This function is used to free all the nodes in the completed service list and reset it to an empty state
+    // It is called during system shutdown to clean up resources
     if (list == NULL) {
         return;
     }
@@ -118,6 +132,7 @@ Response getMenuChoice(int *choice) {
 
 
 Response addNewStudentRequest(StudentRequestQueue *queue, StudentRequest *request) {
+    // Corresponds to menu option 1: Add new student request
     if (queue == NULL || request == NULL || request->name == NULL || request->service_type == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
@@ -131,6 +146,7 @@ Response addNewStudentRequest(StudentRequestQueue *queue, StudentRequest *reques
         return makeResponse(ERROR_MEMORY_ALLOCATION, "Failed to allocate memory for request details.");
     }
 
+    // New requests are always added with WAITING status, and will be updated to SERVICING when they are served
     stored_request.status = WAITING;
 
     Response response = enqueue(queue, &stored_request);
@@ -143,8 +159,9 @@ Response addNewStudentRequest(StudentRequestQueue *queue, StudentRequest *reques
 }
 
 
-Response serveNextStudent(StudentRequestQueue *queue, StudentRequestStack *stack) {
-    if (queue == NULL || stack == NULL) {
+Response serveNextStudent(StudentRequestQueue *queue, StudentRequestStack *stack, CompletedServiceList *list) {
+    // Corresponds to menu option 2: Serve next student
+    if (queue == NULL || stack == NULL || list == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
@@ -157,12 +174,27 @@ Response serveNextStudent(StudentRequestQueue *queue, StudentRequestStack *stack
     next_request.status = SERVICING;
     response = push(stack, &next_request);
     if (response.code != SUCCESS) {
+        // backtrack to restore the queue state if pushing to stack fails
         next_request.status = WAITING;
         Response rollback_response = enqueue(queue, &next_request);
         if (rollback_response.code != SUCCESS) {
             return rollback_response;
         }
+        return response;
+    }
 
+    response = addToList(list, &next_request);
+    if (response.code != SUCCESS) {
+        // backtrack to restore the stack and queue state if adding to list fails
+        next_request.status = WAITING;
+        Response rollback_stack_response = pop(stack, &next_request);
+        if (rollback_stack_response.code != SUCCESS) {
+            return rollback_stack_response;
+        }
+        Response rollback_queue_response = enqueue(queue, &next_request);
+        if (rollback_queue_response.code != SUCCESS) {
+            return rollback_queue_response;
+        }
         return response;
     }
 
@@ -171,27 +203,25 @@ Response serveNextStudent(StudentRequestQueue *queue, StudentRequestStack *stack
 
 
 Response displayWaitingQueue(const StudentRequestQueue *queue) {
+    // Corresponds to menu option 3: Display waiting queue
     return displayQueue(queue);
 }
 
 
 Response displayCompletedServices(const CompletedServiceList *list) {
+    // Corresponds to menu option 4: Display completed services
     return displayList(list);
 }
 
 
 Response searchCompletedServiceByStudentID(const CompletedServiceList *list, int student_id, StudentRequest **result, size_t *count) {
-    if (result == NULL || count == NULL) {
-        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
-    }
-
-    *result = NULL;
-    *count = 0;
+    // Corresponds to menu option 5: Search completed service by student ID
     return searchByStudentID(list, student_id, result, count);
 }
 
 
 Response undoLastCompletedService(StudentRequestStack *stack, StudentRequestQueue *queue, CompletedServiceList *list) {
+    // Corresponds to menu option 6: Undo last completed service
     if (stack == NULL || queue == NULL || list == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
@@ -205,6 +235,7 @@ Response undoLastCompletedService(StudentRequestStack *stack, StudentRequestQueu
     request.status = WAITING;
     response = enqueue(queue, &request);
     if (response.code != SUCCESS) {
+        // backtrack to restore the stack state if enqueue fails
         request.status = SERVICING;
         Response rollback_response = push(stack, &request);
         if (rollback_response.code != SUCCESS) {
@@ -216,6 +247,7 @@ Response undoLastCompletedService(StudentRequestStack *stack, StudentRequestQueu
 
     response = removeLatestCompletedService(list);
     if (response.code != SUCCESS) {
+        // backtrack to restore the queue and stack state if removing from list fails
         request.status = SERVICING;
         Response rollback_response = push(stack, &request);
         if (rollback_response.code != SUCCESS) {
@@ -231,7 +263,7 @@ Response undoLastCompletedService(StudentRequestStack *stack, StudentRequestQueu
     
     printf("Undo successful!\n");
     printf("The following student has been returned to the waiting queue:\n");
-    printf("%d  %-*s  %-*s",
+    printf("%d  %-*s  %-*s",  // Format the output to align the columns based on the length of the name and service type
         request.student_id,
         (int)strlen(request.name), request.name,
         (int)strlen(request.service_type), request.service_type

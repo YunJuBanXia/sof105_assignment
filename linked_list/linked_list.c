@@ -8,6 +8,7 @@
 
 
 static char *duplicateString(const char *source) {
+    // This function is used to create a duplicate of a string, which is necessary when adding requests to the completed service list
     if (source == NULL) {
         return NULL;
     }
@@ -23,6 +24,7 @@ static char *duplicateString(const char *source) {
 
 
 static void freeRequestFields(StudentRequest *request) {
+    // This function is used to free the dynamically allocated fields of a StudentRequest
     if (request == NULL) {
         return;
     }
@@ -92,6 +94,7 @@ Response removeLatestCompletedService(CompletedServiceList *list) {
         return makeResponse(ERROR_QUEUE_EMPTY, "No completed services to remove.");
     }
 
+    // Remove the head of the list, which is the latest completed service
     ListNode *temp = list->head;
     list->head = temp->next;
     list->count--;
