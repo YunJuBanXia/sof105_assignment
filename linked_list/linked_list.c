@@ -2,14 +2,43 @@
 #include "linked_list.h"
 
 #include <stddef.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 
+static char *duplicateString(const char *source) {
+    if (source == NULL) {
+        return NULL;
+    }
+
+    size_t length = strlen(source) + 1;
+    char *copy = (char *)malloc(length);
+    if (copy != NULL) {
+        memcpy(copy, source, length);
+    }
+
+    return copy;
+}
+
+
+static void freeRequestFields(StudentRequest *request) {
+    if (request == NULL) {
+        return;
+    }
+
+    free(request->name);
+    free(request->service_type);
+    request->name = NULL;
+    request->service_type = NULL;
+}
+
+
 Response CountCompletedServices(const CompletedServiceList *list, size_t *count) {
-    if (list == NULL) {
+    if (list == NULL || count == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
+
     *count = list->count;
     return makeResponse(SUCCESS, "Completed services counted successfully.");
 }
@@ -36,13 +65,41 @@ Response addToList(CompletedServiceList *list, StudentRequest *request) {
     if (new_node == NULL) {
         return makeResponse(ERROR_MEMORY_ALLOCATION, "Failed to allocate memory for new list node.");
     }
-    new_node->request = *request;  // Copy the request data
+    new_node->request = *request;
+    new_node->request.name = duplicateString(request->name);
+    new_node->request.service_type = duplicateString(request->service_type);
+    if (new_node->request.name == NULL || new_node->request.service_type == NULL) {
+        freeRequestFields(&new_node->request);
+        free(new_node);
+        return makeResponse(ERROR_MEMORY_ALLOCATION, "Failed to copy completed request details.");
+    }
+    new_node->request.status = COMPLETED;
     new_node->next = list->head; // Insert at the beginning of the list
 
     list->head = new_node;
     list->count++;
 
     return makeResponse(SUCCESS, "Request added to completed service list successfully.");
+}
+
+
+Response removeLatestCompletedService(CompletedServiceList *list) {
+    if (list == NULL) {
+        return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
+    }
+
+    if (list->head == NULL) {
+        return makeResponse(ERROR_QUEUE_EMPTY, "No completed services to remove.");
+    }
+
+    ListNode *temp = list->head;
+    list->head = temp->next;
+    list->count--;
+
+    freeRequestFields(&temp->request);
+    free(temp);
+
+    return makeResponse(SUCCESS, "Latest completed service removed successfully.");
 }
 
 
@@ -92,9 +149,12 @@ Response displayList(const CompletedServiceList *list) {
 
 
 Response searchByStudentID(const CompletedServiceList *list, int student_id, StudentRequest **result, size_t *count) {
-    if (list == NULL) {
+    if (list == NULL || result == NULL || count == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
+
+    *result = NULL;
+    *count = 0;
 
     ListNode *current = list->head;
 

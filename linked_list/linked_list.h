@@ -2,6 +2,8 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
+#include <stddef.h>
+
 #include "../response/response.h"
 #include "../student.h"
 
@@ -21,6 +23,7 @@ typedef struct {
 Response CountCompletedServices(const CompletedServiceList *list, size_t *count);  // count is used to return the number of completed services
 Response initList(CompletedServiceList *list);
 Response addToList(CompletedServiceList *list, StudentRequest *request);
+Response removeLatestCompletedService(CompletedServiceList *list);
 Response displayList(const CompletedServiceList *list);
 Response searchByStudentID(const CompletedServiceList *list, int student_id, StudentRequest **result, size_t *count);  // result is used to return an array of matching requests
 
