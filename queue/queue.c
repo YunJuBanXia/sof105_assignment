@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 
-Response isEmpty(const StudentRequestQueue *queue, int *result) {
+Response isEmptyQueue(const StudentRequestQueue *queue, int *result) {
     if (queue == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
@@ -43,7 +43,7 @@ Response enqueue(StudentRequestQueue *queue, StudentRequest *request) {
 
     // Add the new node to the queue
     int is_empty;
-    Response resp = isEmpty(queue, &is_empty);
+    Response resp = isEmptyQueue(queue, &is_empty);
     if (resp.code != SUCCESS) {
         free(new_node);
         return resp;
@@ -68,7 +68,7 @@ Response dequeue(StudentRequestQueue *queue, StudentRequest *request) {  // The 
     }
 
     int is_empty;
-    Response resp = isEmpty(queue, &is_empty);
+    Response resp = isEmptyQueue(queue, &is_empty);
     if (resp.code != SUCCESS) {
         return resp;
     }
@@ -88,13 +88,13 @@ Response dequeue(StudentRequestQueue *queue, StudentRequest *request) {  // The 
 }
 
 
-Response peek(const StudentRequestQueue *queue, StudentRequest *request) {  // The request parameter is used to return the front request
+Response peekQueue(const StudentRequestQueue *queue, StudentRequest *request) {  // The request parameter is used to return the front request
     if (queue == NULL) {
         return makeResponse(ERROR_INVALID_PARAMETER, "Invalid parameter provided.");
     }
 
     int is_empty;
-    Response resp = isEmpty(queue, &is_empty);
+    Response resp = isEmptyQueue(queue, &is_empty);
     if (resp.code != SUCCESS) {
         return resp;
     }
@@ -115,7 +115,7 @@ Response displayQueue(const StudentRequestQueue *queue) {
     }
 
     int is_empty;
-    Response resp = isEmpty(queue, &is_empty);
+    Response resp = isEmptyQueue(queue, &is_empty);
     if (resp.code != SUCCESS) {
         return resp;
     }
